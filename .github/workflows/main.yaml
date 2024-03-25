@@ -1,0 +1,43 @@
+name: Python Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+        with:
+          fetch-depth: 0  # fetch all history for proper tag identification
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          echo "$POETRY_HOME/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          poetry config virtualenvs.create false
+          poetry install --no-dev
+
+      - name: Run Python script
+        run: |
+          poetry run python my_script.py
+          poetry run python
+
+      - name: Create GitHub Page
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages
+          folder: dist
