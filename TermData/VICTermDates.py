@@ -1,8 +1,9 @@
 import requests
 from datetime import datetime
 from collections import defaultdict
+from ics import Calendar
 
-URL = "https://discover.data.vic.gov.au/dataset/a8bc540d-181b-4fb5-8110-5fe52a04f6a7/resource/65c5b668-b230-41d7-9973-a964c8af2ba7/download/dates20file20for20api20feb202019.csv"
+URL = "https://content.vic.gov.au/sites/default/files/2021-12/Victorian-school-term-dates.ics"
 
 
 class VICTermDates:
@@ -30,23 +31,19 @@ class VICTermDates:
 
         if response.status_code == 200:
             raw_data = response.content.decode("utf-8")
-            split_data = [row for row in raw_data.split("\n") if row.startswith("SCHOOL_TERM,")]
+            c = Calendar(raw_data)
 
-            for row in split_data:
-                columns = row.split(',')
-                if len(columns) == 6:
-                    dateType = columns[1].strip().split('-')[1].strip()
-                    term = columns[1].strip().split('-')[0].split(' ')[1:]
-                    date = self.parse_date(columns[2])
-                    if len(self.data_dict[term[1]][f"Term {term[0]}"]) == 0:
-                        self.data_dict[term[1]][f"Term {term[0]}"] = [0, 0]
-                    if dateType.startswith('Start'):
-                        self.data_dict[term[1]][f"Term {term[0]}"][0] = date
-                    else:
-                        self.data_dict[term[1]][f"Term {term[0]}"][1] = date
+            # for row in split_data:
+            #     columns = row.split(',')
+            #     if len(columns) == 6:
+            #         dateType = columns[1].strip().split('-')[1].strip()
+            #         term = columns[1].strip().split('-')[0].split(' ')[1:]
+            #         date = self.parse_date(columns[2])
+            #         if len(self.data_dict[term[1]][f"Term {term[0]}"]) == 0:
+            #             self.data_dict[term[1]][f"Term {term[0]}"] = [0, 0]
+            #         if dateType.startswith('Start'):
+            #             self.data_dict[term[1]][f"Term {term[0]}"][0] = date.strftime('%Y-%m-%d')
+            #         else:
+            #             self.data_dict[term[1]][f"Term {term[0]}"][1] = date.strftime('%Y-%m-%d')
 
         return self.data_dict
-
-
-vicDates = VICTermDates()
-print(vicDates.data_dict)
