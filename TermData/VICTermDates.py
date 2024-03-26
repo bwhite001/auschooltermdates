@@ -2,6 +2,7 @@ import requests
 from datetime import datetime
 from collections import defaultdict
 from ics import Calendar
+import json
 
 URL = "https://content.vic.gov.au/sites/default/files/2021-12/Victorian-school-term-dates.ics"
 
@@ -10,7 +11,7 @@ class VICTermDates:
 
     def __init__(self):
         self.url = URL
-        self.data_dict = defaultdict(lambda: defaultdict(list))
+        self.data_dict = defaultdict(lambda: defaultdict(dict))
         self.download_data()
 
     @staticmethod
@@ -31,19 +32,21 @@ class VICTermDates:
 
         if response.status_code == 200:
             raw_data = response.content.decode("utf-8")
-            c = Calendar(raw_data)
-
-            # for row in split_data:
-            #     columns = row.split(',')
-            #     if len(columns) == 6:
-            #         dateType = columns[1].strip().split('-')[1].strip()
-            #         term = columns[1].strip().split('-')[0].split(' ')[1:]
-            #         date = self.parse_date(columns[2])
-            #         if len(self.data_dict[term[1]][f"Term {term[0]}"]) == 0:
-            #             self.data_dict[term[1]][f"Term {term[0]}"] = [0, 0]
-            #         if dateType.startswith('Start'):
-            #             self.data_dict[term[1]][f"Term {term[0]}"][0] = date.strftime('%Y-%m-%d')
-            #         else:
-            #             self.data_dict[term[1]][f"Term {term[0]}"][1] = date.strftime('%Y-%m-%d')
+            cal = Calendar(raw_data)
+            events = cal.events
+            for event in events:
+                if 'government' in event.name:
+                    continue
+                date = event.begin.datetime
+                date_type = event.name.strip().split(' ')[-1]
+                year = date.year
+                term = event.name.replace(date_type, '').strip()
+                # date = self.parse_date(columns[2])
+                if len(self.data_dict[f"{year}"][term]) == 0:
+                    self.data_dict[f"{year}"][term] = {}
+                if date_type.startswith('starts'):
+                    self.data_dict[f"{year}"][term]['start'] = date.strftime('%Y-%m-%d')
+                else:
+                    self.data_dict[f"{year}"][term]['end'] = date.strftime('%Y-%m-%d')
 
         return self.data_dict

@@ -17,15 +17,12 @@ class DateTimeEncoder(json.JSONEncoder):
 all_term_dates = {}
 
 # Loop through all states
-states = ["NSW", "VIC"]
+states = {
+    'NSW': NSWTermDates(),
+    'VIC': NSWTermDates(),
+}
 
-for state in states:
-    term_dates = None
-    if state.upper() == "NSW":
-        term_dates = NSWTermDates()
-    elif state.upper() == "VIC":
-        term_dates = VICTermDates()
-
+for state, term_dates in states.items():
     # Get the term dates for all years
     if term_dates.data_dict is not None:
         state_term_dates = term_dates.data_dict

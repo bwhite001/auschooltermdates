@@ -9,7 +9,7 @@ class NSWTermDates:
 
     def __init__(self):
         self.url = URL
-        self.data_dict = defaultdict(lambda: defaultdict(list))
+        self.data_dict = defaultdict(lambda: defaultdict(dict))
         self.download_data()
 
     @staticmethod
@@ -38,9 +38,9 @@ class NSWTermDates:
                     start_date = self.parse_date(dates[0])
                     end_date = self.parse_date(dates[1])
 
-                    self.data_dict[start_date.year][f"Term {self.get_quarter(start_date)}"].extend([
-                        start_date.strftime('%Y-%m-%d'),
-                        end_date.strftime('%Y-%m-%d'),
-                    ])
+                    self.data_dict[start_date.year][f"Term {self.get_quarter(start_date)}"] = {
+                        'start': start_date.strftime('%Y-%m-%d'),
+                        'end': end_date.strftime('%Y-%m-%d'),
+                    }
 
         return self.data_dict
