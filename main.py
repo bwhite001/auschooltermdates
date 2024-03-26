@@ -1,8 +1,7 @@
 import json
 import datetime
 
-from TermData import NSWTermDates
-from TermData import VICTermDates
+from TermData import NSWTermDates, VICTermDates, QLDTermDates
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -19,7 +18,8 @@ all_term_dates = {}
 # Loop through all states
 states = {
     'NSW': NSWTermDates(),
-    'VIC': NSWTermDates(),
+    'VIC': VICTermDates(),
+    'QLD': QLDTermDates(),
 }
 
 for state, term_dates in states.items():
