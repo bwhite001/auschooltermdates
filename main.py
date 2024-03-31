@@ -1,8 +1,6 @@
 import json
 import datetime
-
-from TermData import NSWTermDates, VICTermDates, QLDTermDates
-from TermData.WATermDates import WATermDates
+from TermData import *
 
 
 class DateTimeEncoder(json.JSONEncoder):
