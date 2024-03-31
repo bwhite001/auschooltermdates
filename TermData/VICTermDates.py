@@ -15,10 +15,6 @@ class VICTermDates:
         self.download_data()
 
     @staticmethod
-    def get_quarter(dt):
-        return (dt.month - 1) // 3 + 1
-
-    @staticmethod
     def parse_date(date_str):
         try:
             return datetime.strptime(date_str.strip(), '%Y-%m-%d')  # str.strip() will remove lead/trail white spaces
