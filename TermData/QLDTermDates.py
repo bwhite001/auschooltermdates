@@ -10,18 +10,18 @@ import re
 URL = "https://education.qld.gov.au/about-us/calendar/term-dates"
 FUTURE_URL = "https://education.qld.gov.au/about-us/calendar/future-dates"
 
-class QLDTermDates:
 
+class QLDTermDates:
     def __init__(self):
-        self.url = URL
         self.data_dict = defaultdict(lambda: defaultdict(dict))
-        self.download_data()
+        self.download(URL, 'current')
+        self.download(FUTURE_URL, 'future')
 
     @staticmethod
     def parse_paragraph(text, year):
         text = text.split('—')[0]  # remove the part that is not needed
         start_date_string, end_date_string = text.split(
-            'to')  # split start and end dates
+            ' to ')  # split start and end dates
         start_date_string = start_date_string.split(
             ':')[1].strip()  # remove 'Term 1:' part
         start_date_string += f" {year}"
@@ -33,10 +33,13 @@ class QLDTermDates:
 
         return {'start': start_date.strftime('%Y-%m-%d'), 'end': end_date.strftime('%Y-%m-%d')}
 
-    def parseCurent(self, response):
+    def parse_current(self, response):
         soup = BeautifulSoup(response.text, 'html.parser')
-        year = soup.find('h3', string="Queensland term dates").find_previous("h2").text.strip()
         h3 = soup.find('h3', string="Queensland term dates")
+        self.parseSoup(h3)
+
+    def parseSoup(self, h3):
+        year = h3.find_previous("h2").text.strip()
         # find the next 4 strong elements containing 'Term'
         terms = h3.find_all_next('strong', string=re.compile('^Term'))[:4]
         for term in terms:
@@ -44,11 +47,16 @@ class QLDTermDates:
             dates = self.parse_paragraph(term.parent.text, year)
             self.data_dict[year][term_text] = dates
 
-    def download_data(self):
-        response = requests.get(self.url)
-        if response.status_code == 200:
-            self.parseCurent(response)
-        return self.data_dict
+    def parse_future(self, response):
+        soup = BeautifulSoup(response.text, 'html.parser')
+        years_group = soup.findAll('h3', string="Queensland term dates")
+        for year in years_group:
+            self.parseSoup(year)
 
-test = QLDTermDates()
-print(json.dumps(test.data_dict, indent=2))
+    def download(self, url, url_type):
+        response = requests.get(url)
+        if response.status_code == 200:
+            if url_type == 'current':
+                self.parse_current(response)
+            else:
+                self.parse_future(response)
