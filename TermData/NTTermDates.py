@@ -61,7 +61,3 @@ class NTTermDates:
         response = requests.get(url, headers=HEADERS)
         if response.status_code == 200:
             self.create_soup(response)
-
-
-nt = NTTermDates()
-print(json.dumps(nt.data_dict, indent=2))
