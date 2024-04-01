@@ -2,6 +2,7 @@ import json
 import datetime
 from TermData import *
 from TermData.SATermDates import SATermDates
+from TermData.TASTermDates import TASTermDates
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -51,6 +52,7 @@ def run():
         'NT': NTTermDates(),
         'QLD': QLDTermDates(),
         'SA': SATermDates(),
+        'TAS': TASTermDates(),
         'VIC': VICTermDates(),
         'WA': WATermDates()
     }

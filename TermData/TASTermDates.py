@@ -67,7 +67,3 @@ class TASTermDates:
         response = requests.get(url, headers=HEADERS)
         if response.status_code == 200:
             self.create_soup(response)
-
-
-tas = TASTermDates()
-print(json.dumps(tas.data_dict, indent=2))
