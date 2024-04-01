@@ -35,6 +35,6 @@ jobs:
               poetry run python main.py
 
           - name: Create GitHub Page
-            uses: JamesIves/github-pages-deploy-action@4.1.0
+            uses: JamesIves/github-pages-deploy-action@v4.5.0
             with:
               folder: dist
