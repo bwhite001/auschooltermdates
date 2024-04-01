@@ -48,6 +48,7 @@ def run():
     states = {
         'ACT': ACTTermDates(),
         'NSW': NSWTermDates(),
+        'NT': NTTermDates(),
         'QLD': QLDTermDates(),
         'SA': SATermDates(),
         'VIC': VICTermDates(),
