@@ -2,8 +2,8 @@ name: Python Package
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - 'main'
   workflow_dispatch:
 
 jobs:
