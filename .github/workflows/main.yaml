@@ -8,36 +8,30 @@ on:
 
 jobs:
   build:
+      runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+      steps:
+          - name: Checkout repository
+            uses: actions/checkout@v2
 
-    steps:
-      - uses: actions/checkout@v2
+          - name: Set up Python
+            uses: actions/setup-python@v2
+            with:
+                python-version: 3.x
 
-        with:
-          fetch-depth: 0  # fetch all history for proper tag identification
+          - name: Install Poetry
+            run: |
+                curl -sSL https://install.python-poetry.org | python3 -
+                echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
+          - name: Install dependencies
+            run: poetry install
 
-      - name: Install Poetry
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-          echo "$POETRY_HOME/bin" >> $GITHUB_PATH
+          - name: Run Python script
+            run: |
+              poetry run python main.py
 
-      - name: Install dependencies
-        run: |
-          poetry config virtualenvs.create false
-          poetry install --no-dev
-
-      - name: Run Python script
-        run: |
-          poetry run python main.py
-
-      - name: Create GitHub Page
-        uses: JamesIves/github-pages-deploy-action@4.1.0
-        with:
-          branch: gh-pages
-          folder: dist
+          - name: Create GitHub Page
+            uses: JamesIves/github-pages-deploy-action@4.1.0
+            with:
+              folder: dist
